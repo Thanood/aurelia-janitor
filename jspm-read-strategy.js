@@ -54,7 +54,7 @@ let readConfig = (config, topLevelDependencies) => {
 
 function outputDependencies(deps) {
     deps.forEach(dependency => {
-        console.log(output.info("[%s] ") + "%s - registry: %s, pkg: %s, version: %s",  dependency.index, dependency.alias, dependency.registry, dependency.pkg, dependency.version);
+        console.log(output.info("[%s] ") + "%s - registry: %s, pkg: %s, semver: %s",  dependency.index, dependency.alias, dependency.registry, dependency.pkg, dependency.semver);
     });
 }
 
@@ -78,11 +78,11 @@ function readJspmProject(project, projectPath) {
     global.System = _originalSystem;
     let configDependencies = readConfig(config, topLevelDependencies);
     
-    console.log('top level dependencies:');
+    console.log('top level ' + output._('project.json') + ' dependencies:');
     outputDependencies(topLevelDependencies);
     
     console.log('');
-    console.log('config dependencies:');
+    console.log('top level ' + output._('config.js') + ' dependencies:');
     outputDependencies(configDependencies);
 }
 

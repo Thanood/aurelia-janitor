@@ -2,7 +2,6 @@
 
 // TODO: check out https://www.npmjs.com/package/semver
 
-let chalk = require('chalk');
 let fs = require('fs');
 let path = require('path');
 let pkg = require(path.join(__dirname, 'package.json'));
