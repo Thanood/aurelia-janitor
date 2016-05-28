@@ -33,5 +33,14 @@ fs.readFile(path.join(projectPath, 'package.json'), (err, data) => {
         jspmStrategy.readJspmProject(project, projectPath);
     } else {
         console.log('project is not using jspm');
+        if (project.devDependencies) {
+            if (project.devDependencies.webpack) {
+                console.log('project is using webpack');
+            } else {
+                console.log('project is not using webpack');
+            }
+        } else {
+            console.log(output.warn('WARNING') + ' no module loader found');
+        }
     }
 });
