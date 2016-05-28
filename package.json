@@ -1,0 +1,24 @@
+{
+  "name": "aurelia-janitor",
+  "version": "0.1.0",
+  "description": "",
+  "main": "janitor.js",
+  "scripts": {
+    "start": "node ./janitor.js",
+    "test": "node ./janitor.js -p ../aurelia-materialize-bridge"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Thanood/aurelia-janitor.git"
+  },
+  "keywords": [
+      "aurelia",
+      "modules"
+  ],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Thanood/aurelia-janitor/issues"
+  },
+  "homepage": "https://github.com/Thanood/aurelia-janitor#readme"
+}
