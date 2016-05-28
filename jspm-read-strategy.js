@@ -52,6 +52,28 @@ let readConfig = (config, topLevelDependencies) => {
     return configDependencies;
 };
 
+function readSecondLevelDependencies(configDependencies, config) {
+    // FIXME: needs recursion
+    let allSecondLevelDependencies = [];
+    configDependencies.forEach(dep => {
+        let alias = dep.registry + ':' + dep.pkg + '@' + dep.version;
+        let secondLevelDependency = config.map[alias];
+        let secondLevelDependencies = [];
+        if (secondLevelDependency) {
+            // console.log('found dep dep: %s', alias);
+            for (var dep in secondLevelDependency) {
+                let dependency = readJspmDependency(alias, dep, secondLevelDependency[dep]);
+                secondLevelDependencies.push(dependency);
+            }
+        } else {
+            // FIXME: this may as well be a dependency without dependencies
+            console.log(output.warn('WARNING:') + 'no dependencies found for %s', alias);
+        }
+        allSecondLevelDependencies.push(secondLevelDependencies);
+    });
+    return allSecondLevelDependencies;
+}
+
 function outputDependencies(deps) {
     deps.forEach(dependency => {
         console.log(output.info("[%s] ") + "%s - registry: %s, pkg: %s, semver: %s",  dependency.index, dependency.alias, dependency.registry, dependency.pkg, dependency.semver);
@@ -77,6 +99,7 @@ function readJspmProject(project, projectPath) {
     require(path.join(projectPath, 'config.js'));
     global.System = _originalSystem;
     let configDependencies = readConfig(config, topLevelDependencies);
+    let secondLevelDependencies = readSecondLevelDependencies(configDependencies, config);
     
     console.log('top level ' + output._('project.json') + ' dependencies:');
     outputDependencies(topLevelDependencies);
@@ -84,6 +107,12 @@ function readJspmProject(project, projectPath) {
     console.log('');
     console.log('top level ' + output._('config.js') + ' dependencies:');
     outputDependencies(configDependencies);
+    
+    console.log('');
+    console.log('all second level deps');
+    secondLevelDependencies.forEach(deps => {
+       outputDependencies(deps); 
+    });
 }
 
 module.exports = {
