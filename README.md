@@ -1,5 +1,9 @@
 # aurelia-janitor
 
+janitor helps with matching versions of (JSPM) dependencies defined in `package.json` with actual versions installed in `config.js`.
+This should lead to (for example) detecting possible "forks" before they actually happen.
+In summary, janitor helps with housekeeping of JSPM dependencies used by your app or library. 
+
 **stage**: pre-concept ;-)
 
 At the moment, this is just an experiment on how to read a JSPM config and match it with the installed JSPM package versions.
