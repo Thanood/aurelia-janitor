@@ -74,6 +74,31 @@ function readSecondLevelDependencies(configDependencies, config) {
     return allSecondLevelDependencies;
 }
 
+function readDependenciesOfDependencies(rootDependencies, config) {
+    let dependencyMap = { };
+    rootDependencies.forEach(rootDep => {
+        let alias = rootDep.registry + ':' + rootDep.pkg + '@' + rootDep.version;
+        
+        console.log('checking deps for ' + alias);
+        
+        let childDependency = config.map[alias];
+        if (childDependency) {
+            let childDependencies = [];
+            for (let dep in childDependency) {
+                // let dependency = config.map[dep];
+                let dependency = readJspmDependency(alias, dep, childDependency[dep]);
+                childDependencies.push(dependency);
+            }
+            dependencyMap[alias] = readDependenciesOfDependencies(childDependencies, config);
+        } else {
+            // end of dependency chain
+            // console.log(output.warn('WARNING:') + 'no dependencies found for %s', alias);
+            dependencyMap[alias] = null;
+        }
+    });
+    return dependencyMap;
+}
+
 function outputDependencies(deps) {
     deps.forEach(dependency => {
         console.log(output.info("[%s] ") + "%s - registry: %s, pkg: %s, semver: %s",  dependency.index, dependency.alias, dependency.registry, dependency.pkg, dependency.semver);
@@ -101,7 +126,7 @@ function readJspmProject(project, projectPath) {
     let configDependencies = readConfig(config, topLevelDependencies);
     let secondLevelDependencies = readSecondLevelDependencies(configDependencies, config);
     
-    console.log('top level ' + output._('project.json') + ' dependencies:');
+    console.log('top level ' + output._('package.json') + ' dependencies:');
     outputDependencies(topLevelDependencies);
     
     console.log('');
@@ -109,10 +134,12 @@ function readJspmProject(project, projectPath) {
     outputDependencies(configDependencies);
     
     console.log('');
-    console.log('all second level deps');
-    secondLevelDependencies.forEach(deps => {
-       outputDependencies(deps); 
-    });
+    // console.log('all second level deps');
+    // secondLevelDependencies.forEach(deps => {
+    //    outputDependencies(deps); 
+    // });
+    let dependencyMap = readDependenciesOfDependencies(configDependencies, config);
+    console.log(dependencyMap);
 }
 
 module.exports = {
