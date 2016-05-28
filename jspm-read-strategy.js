@@ -17,20 +17,27 @@ let readJspmDependency = (index, alias, dep) => {
     
     let pkgTokens = pkgName.split('@');
     let pkg = pkgTokens[0];
-    let version = pkgTokens[1];
+    let semver = pkgTokens[1];
+    let semverPrefix = '';
+    let version = semver;
+    
+    if (semver[0] === '^' || semver[0] === '~') {
+        semverPrefix = semver[0];
+        version = semver.substring(1);
+    }
     
     return {
         index,
         alias,
         registry,
         pkg,
+        semver,
+        semverPrefix,
         version
     }
 };
 
 let readConfig = (config, topLevelDependencies) => {
-    console.log('');
-    console.log('config dependencies:');
     let configDependencies = [];
     for (let index in topLevelDependencies) {
         let dep = topLevelDependencies[index];
@@ -38,7 +45,6 @@ let readConfig = (config, topLevelDependencies) => {
         if (dependency) {
             let resolvedDependency = readJspmDependency(index, dep.alias, dependency);
             configDependencies.push(resolvedDependency);
-            console.log(output.info("[%s] ") + "%s - registry: %s, pkg: %s, version: %s", resolvedDependency.index, resolvedDependency.alias, resolvedDependency.registry, resolvedDependency.pkg, resolvedDependency.version);
         } else {
             console.log(output.warn('WARNING:') + 'alias from package.json not found in config.js: %s', dep.alias);
         }
@@ -46,15 +52,19 @@ let readConfig = (config, topLevelDependencies) => {
     return configDependencies;
 };
 
+function outputDependencies(deps) {
+    deps.forEach(dependency => {
+        console.log(output.info("[%s] ") + "%s - registry: %s, pkg: %s, version: %s",  dependency.index, dependency.alias, dependency.registry, dependency.pkg, dependency.version);
+    });
+}
+
 function readJspmProject(project, projectPath) {
-    console.log('top level dependencies:');
     let topLevelDeps = project.jspm.dependencies;
     let topLevelDependencies = [];
     let index = 0;
     for (let dep in topLevelDeps) {
         let dependency = readJspmDependency(index++, dep, topLevelDeps[dep]);
         topLevelDependencies.push(dependency);
-        console.log(output.info("[%s] ") + "%s - registry: %s, pkg: %s, version: %s",  dependency.index, dependency.alias, dependency.registry, dependency.pkg, dependency.version);
     }
     
     let _originalSystem = global.System;
@@ -67,6 +77,13 @@ function readJspmProject(project, projectPath) {
     require(path.join(projectPath, 'config.js'));
     global.System = _originalSystem;
     let configDependencies = readConfig(config, topLevelDependencies);
+    
+    console.log('top level dependencies:');
+    outputDependencies(topLevelDependencies);
+    
+    console.log('');
+    console.log('config dependencies:');
+    outputDependencies(configDependencies);
 }
 
 module.exports = {
