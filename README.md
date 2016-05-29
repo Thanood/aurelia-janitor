@@ -7,7 +7,7 @@ In summary, janitor helps with housekeeping of JSPM dependencies used by your ap
 **stage**: pre-concept ;-)
 
 At the moment, this is just an experiment on how to read a JSPM config and match it with the installed JSPM package versions.
-If you happen to stumble upon this, please note that not even "real" data structures are implemented.
+If you happen to stumble upon this, please note that it does nothing of real use, yet.
 
 This is how it looks atm:
 
