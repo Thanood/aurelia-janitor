@@ -7,7 +7,7 @@
             "request": "launch",
             "program": "${workspaceRoot}/janitor.js",
             "stopOnEntry": false,
-            "args": ["-p", "../skeleton-navigation-1.0.0-beta.1.2.5/skeleton-es2016"],
+            "args": ["-p", "../skeleton-navigation-1.0.0-beta.1.2.5/skeleton-es2016-asp.net5/src/skeleton-navigation-es2016-vs"],
             "cwd": "${workspaceRoot}",
             "preLaunchTask": null,
             "runtimeExecutable": null,

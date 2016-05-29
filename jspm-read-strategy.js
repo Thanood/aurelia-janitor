@@ -83,7 +83,7 @@ function readDependenciesOfDependencies(rootDependencies, config) {
            uniqueLeaves.push(dep);
        } 
     });
-    leafDependencies = uniqueLeaves;
+    leafDependencies = uniqueLeaves.sort();
     return {dependencyMap, leafDependencies};
 }
 
