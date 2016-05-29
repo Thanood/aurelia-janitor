@@ -77,13 +77,7 @@ function readDependenciesOfDependencies(rootDependencies, config) {
     return dependencyMap;
 }
 
-function outputDependencies(deps) {
-    deps.forEach(dependency => {
-        console.log(output.info("[%s] ") + "%s - registry: %s, pkg: %s, semver: %s",  dependency.index, dependency.alias, dependency.registry, dependency.pkg, dependency.semver);
-    });
-}
-
-function readJspmProject(project, projectPath) {
+function readTopLevelDependencies(project) {
     let topLevelDeps = project.jspm.dependencies;
     let topLevelDependencies = [];
     let index = 0;
@@ -91,6 +85,17 @@ function readJspmProject(project, projectPath) {
         let dependency = readJspmDependency(index++, dep, topLevelDeps[dep]);
         topLevelDependencies.push(dependency);
     }
+    return topLevelDependencies;
+}
+
+function outputDependencies(deps) {
+    deps.forEach(dependency => {
+        console.log(output.info("[%s] ") + "%s - registry: %s, pkg: %s, semver: %s",  dependency.index, dependency.alias, dependency.registry, dependency.pkg, dependency.semver);
+    });
+}
+
+function readJspmProject(project, projectPath) {
+    let topLevelDependencies = readTopLevelDependencies(project);
     
     let _originalSystem = global.System;
     let config = null;
@@ -116,5 +121,5 @@ function readJspmProject(project, projectPath) {
 }
 
 module.exports = {
-    readJspmProject
+    readProject: readJspmProject
 };

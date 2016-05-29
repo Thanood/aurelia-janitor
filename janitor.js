@@ -30,7 +30,7 @@ fs.readFile(path.join(projectPath, 'package.json'), (err, data) => {
     if (project.jspm) {
         console.log(output.info('project is using jspm'));
         console.log('');
-        jspmStrategy.readJspmProject(project, projectPath);
+        jspmStrategy.readProject(project, projectPath);
     } else {
         console.log('project is not using jspm');
         if (project.devDependencies) {
