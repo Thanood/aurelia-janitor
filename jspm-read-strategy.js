@@ -54,6 +54,7 @@ let readConfig = (config, topLevelDependencies) => {
 
 function readDependenciesOfDependencies(rootDependencies, config) {
     let dependencyMap = { };
+    let leafDependencies = [];
     rootDependencies.forEach(rootDep => {
         let alias = rootDep.registry + ':' + rootDep.pkg + '@' + rootDep.version;
         
@@ -67,14 +68,23 @@ function readDependenciesOfDependencies(rootDependencies, config) {
                 let dependency = readJspmDependency(alias, dep, childDependency[dep]);
                 childDependencies.push(dependency);
             }
-            dependencyMap[alias] = readDependenciesOfDependencies(childDependencies, config);
+            let result = readDependenciesOfDependencies(childDependencies, config);
+            dependencyMap[alias] = result.dependencyMap;
+            leafDependencies = leafDependencies.concat(result.leafDependencies);
         } else {
             // end of dependency chain
-            // console.log(output.warn('WARNING:') + 'no dependencies found for %s', alias);
             dependencyMap[alias] = null;
+            leafDependencies.push(alias);
         }
     });
-    return dependencyMap;
+    let uniqueLeaves = [];
+    leafDependencies.forEach(dep => {
+       if (uniqueLeaves.indexOf(dep) === -1) {
+           uniqueLeaves.push(dep);
+       } 
+    });
+    leafDependencies = uniqueLeaves;
+    return {dependencyMap, leafDependencies};
 }
 
 function readTopLevelDependencies(project) {
@@ -86,6 +96,14 @@ function readTopLevelDependencies(project) {
         topLevelDependencies.push(dependency);
     }
     return topLevelDependencies;
+}
+
+function findConfig(project) {
+    let baseURL = '.';
+    if (project.jspm.directories && project.jspm.directories.baseURL) {
+        baseURL = project.jspm.directories.baseURL;
+    }
+    return baseURL + '/config.js';
 }
 
 function outputDependencies(deps) {
@@ -104,7 +122,9 @@ function readJspmProject(project, projectPath) {
             config = cfg;
         }
     };
-    require(path.join(projectPath, 'config.js'));
+    let baseURL = findConfig(project);
+    // require(path.join(projectPath, 'config.js'));
+    require(path.join(projectPath, baseURL));
     global.System = _originalSystem;
     let configDependencies = readConfig(config, topLevelDependencies);
     
