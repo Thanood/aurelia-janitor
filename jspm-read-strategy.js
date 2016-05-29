@@ -52,28 +52,6 @@ let readConfig = (config, topLevelDependencies) => {
     return configDependencies;
 };
 
-function readSecondLevelDependencies(configDependencies, config) {
-    // FIXME: needs recursion
-    let allSecondLevelDependencies = [];
-    configDependencies.forEach(dep => {
-        let alias = dep.registry + ':' + dep.pkg + '@' + dep.version;
-        let secondLevelDependency = config.map[alias];
-        let secondLevelDependencies = [];
-        if (secondLevelDependency) {
-            // console.log('found dep dep: %s', alias);
-            for (var dep in secondLevelDependency) {
-                let dependency = readJspmDependency(alias, dep, secondLevelDependency[dep]);
-                secondLevelDependencies.push(dependency);
-            }
-        } else {
-            // FIXME: this may as well be a dependency without dependencies
-            console.log(output.warn('WARNING:') + 'no dependencies found for %s', alias);
-        }
-        allSecondLevelDependencies.push(secondLevelDependencies);
-    });
-    return allSecondLevelDependencies;
-}
-
 function readDependenciesOfDependencies(rootDependencies, config) {
     let dependencyMap = { };
     rootDependencies.forEach(rootDep => {
@@ -124,7 +102,6 @@ function readJspmProject(project, projectPath) {
     require(path.join(projectPath, 'config.js'));
     global.System = _originalSystem;
     let configDependencies = readConfig(config, topLevelDependencies);
-    let secondLevelDependencies = readSecondLevelDependencies(configDependencies, config);
     
     console.log('top level ' + output._('package.json') + ' dependencies:');
     outputDependencies(topLevelDependencies);
@@ -134,10 +111,6 @@ function readJspmProject(project, projectPath) {
     outputDependencies(configDependencies);
     
     console.log('');
-    // console.log('all second level deps');
-    // secondLevelDependencies.forEach(deps => {
-    //    outputDependencies(deps); 
-    // });
     let dependencyMap = readDependenciesOfDependencies(configDependencies, config);
     console.log(dependencyMap);
 }
