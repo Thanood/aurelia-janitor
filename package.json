@@ -12,13 +12,17 @@
     "url": "git+https://github.com/Thanood/aurelia-janitor.git"
   },
   "keywords": [
-      "aurelia",
-      "modules"
+    "aurelia",
+    "modules"
   ],
   "author": "",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/Thanood/aurelia-janitor/issues"
   },
-  "homepage": "https://github.com/Thanood/aurelia-janitor#readme"
+  "homepage": "https://github.com/Thanood/aurelia-janitor#readme",
+  "dependencies": {
+    "chalk": "^1.1.3",
+    "commander": "^2.9.0"
+  }
 }
